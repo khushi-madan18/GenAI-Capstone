@@ -20,4 +20,35 @@ print("Final dataset shape:", df.shape)
 print("Class distribution:")
 print(df["label"].value_counts())
 
+# TEXT PREPROCESSING FUNCTION
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+from nltk.stem import WordNetLemmatizer
+
+nltk.download("punkt")
+nltk.download("punkt_tab")
+nltk.download("stopwords")
+nltk.download("wordnet")
+
+stop_words = set(stopwords.words("english"))
+negation_words = {"not", "nor", "never", "no"}
+stop_words = stop_words - negation_words
+
+lemmatizer = WordNetLemmatizer()
+
+def custom_preprocessor(text):
+  text = text.lower()
+  text = re.sub(r"http\S+|www\S+|https\S+", "", text)
+  text = re.sub(r"\d+", "", text)
+  text = text.translate(str.maketrans("", "", string.punctuation))
+  words = word_tokenize(text)
+  words = [
+      lemmatizer.lemmatize(word)
+      for word in words
+      if word not in stop_words and word.isalpha()
+  ]
+  return " ".join(words)
+
+print(custom_preprocessor(df["content"].iloc[0]))
+
 
